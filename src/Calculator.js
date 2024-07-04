@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Display } from './Display';
-import { Button } from './Button';
-import './Calculator.css';
+import React, { useState } from "react";
+import { Display } from "./Display";
+import { Button } from "./Button";
+import "./Calculator.css";
 
 const Calculator = () => {
   const [expression, setExpression] = useState("");
@@ -26,29 +26,40 @@ const Calculator = () => {
 
   const handleOperator = (op) => {
     if (currentInput) {
-        setExpression((prev) => prev + currentInput + op);
-        setCurrentInput("");
-        setIsNewInput(true);
-      } else if (expression) {
-        const lastChar = expression.slice(-1);
-        const isNegative = op === "-" && /[+\-*/]$/.test(expression);
-
-        if (/[+\-*/]$/.test(lastChar)) {
-          if (isNegative) {
-            setExpression((prev) => prev + op);
-          } else {
-            setExpression((prev) => prev.slice(0, -2) + op);
-          }
-        }
-      } 
+      setExpression((prev) => prev + currentInput + op);
+      setCurrentInput("");
+      setIsNewInput(true);
+    } else if (expression) {
+      setExpression((prev) => prev + op);
+    }
   };
 
   const handleEqual = () => {
     if (currentInput || expression) {
-      const finalExpression = expression + currentInput;
       try {
         // eslint-disable-next-line no-new-func
-        const result = new Function("return " + finalExpression.replace(/--/g, "+"))();
+        var finalExpression = expression + currentInput;
+        finalExpression = finalExpression.replace(/--/g, "+");
+
+        var toReplace = finalExpression.match(/[-+*/]{2,}/g) || [];
+
+        for (let index = 0; index < toReplace.length; index++) {
+          const element = toReplace[index];
+
+          if (element.slice(-1) === "-") {
+            finalExpression = finalExpression.replace(
+              element,
+              element.slice(-2)
+            );
+          } else {
+            finalExpression = finalExpression.replace(
+              element,
+              element.slice(-1)
+            );
+          }
+        }
+
+        const result = new Function(`return ${finalExpression}`)();
         const roundedResult = roundResult(result, 4);
         setExpression("");
         setCurrentInput(String(roundedResult));
@@ -76,20 +87,90 @@ const Calculator = () => {
       <Display value={expression + (currentInput === "" ? "" : currentInput)} />
       <div className="button-grid">
         <Button id="clear" label="C" onClick={handleClear} />
-        <Button className="operator" id="divide" label="/" onClick={() => handleOperator('/')} />
-        <Button className="number" id="seven" label="7" onClick={() => handleNumber('7')} />
-        <Button className="number" id="eight" label="8" onClick={() => handleNumber('8')} />
-        <Button className="number" id="nine" label="9" onClick={() => handleNumber('9')} />
-        <Button className="operator" id="multiply" label="*" onClick={() => handleOperator('*')} />
-        <Button className="number" id="four" label="4" onClick={() => handleNumber('4')} />
-        <Button className="number" id="five" label="5" onClick={() => handleNumber('5')} />
-        <Button className="number" id="six" label="6" onClick={() => handleNumber('6')} />
-        <Button className="operator" id="add" label="+" onClick={() => handleOperator('+')} />
-        <Button className="number" id="one" label="1" onClick={() => handleNumber('1')} />
-        <Button className="number" id="two" label="2" onClick={() => handleNumber('2')} />
-        <Button className="number" id="three" label="3" onClick={() => handleNumber('3')} />
-        <Button className="operator" id="subtract" label="-" onClick={() => handleOperator('-')} />
-        <Button className="number" id="zero" label="0" onClick={() => handleNumber('0')} />
+        <Button
+          className="operator"
+          id="divide"
+          label="/"
+          onClick={() => handleOperator("/")}
+        />
+        <Button
+          className="number"
+          id="seven"
+          label="7"
+          onClick={() => handleNumber("7")}
+        />
+        <Button
+          className="number"
+          id="eight"
+          label="8"
+          onClick={() => handleNumber("8")}
+        />
+        <Button
+          className="number"
+          id="nine"
+          label="9"
+          onClick={() => handleNumber("9")}
+        />
+        <Button
+          className="operator"
+          id="multiply"
+          label="*"
+          onClick={() => handleOperator("*")}
+        />
+        <Button
+          className="number"
+          id="four"
+          label="4"
+          onClick={() => handleNumber("4")}
+        />
+        <Button
+          className="number"
+          id="five"
+          label="5"
+          onClick={() => handleNumber("5")}
+        />
+        <Button
+          className="number"
+          id="six"
+          label="6"
+          onClick={() => handleNumber("6")}
+        />
+        <Button
+          className="operator"
+          id="add"
+          label="+"
+          onClick={() => handleOperator("+")}
+        />
+        <Button
+          className="number"
+          id="one"
+          label="1"
+          onClick={() => handleNumber("1")}
+        />
+        <Button
+          className="number"
+          id="two"
+          label="2"
+          onClick={() => handleNumber("2")}
+        />
+        <Button
+          className="number"
+          id="three"
+          label="3"
+          onClick={() => handleNumber("3")}
+        />
+        <Button
+          className="operator"
+          id="subtract"
+          label="-"
+          onClick={() => handleOperator("-")}
+        />
+        <Button
+          className="number"
+          id="zero"
+          label="0"
+          onClick={() => handleNumber("0")}
+        />
         <Button id="decimal" label="." onClick={handleDecimal} />
         <Button id="equals" label="=" onClick={handleEqual} />
       </div>
@@ -97,4 +178,4 @@ const Calculator = () => {
   );
 };
 
-export {Calculator};
+export { Calculator };
